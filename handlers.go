@@ -8,7 +8,6 @@ import (
     "strconv"
     "os"
     "sort"
-    "time"
 
     "github.com/gorilla/mux"
 )
@@ -16,7 +15,6 @@ import (
 const (
     DataFile string = "ping.data"
     AllDevices string = "all"
-    DateLayoutISO string = "2006-01-02"
 )
 
 func StorePing(w http.ResponseWriter, r *http.Request) {
@@ -54,25 +52,27 @@ func RetrievePing(w http.ResponseWriter, r *http.Request) {
     id := vars["deviceId"]
     from := vars["from"]
 
-    // parse from to ISO date
-    fromDate, err := time.Parse(DateLayoutISO, from) 
-    if err != nil {
- 	fmt.Printf("Date parse error")
-    }
-    fmt.Printf("ISO date is %v", fromDate)
-
     m, err := GetPingMap()
     if err != nil {
 	fmt.Printf("Could not get ping map")
     }
 
     if id == AllDevices {
-	// filter on every slice	
+	// filter on every slice
+   	for _, i := range m {
+ 	    i = i.Pings(from)
+  	}	
+        pingResponse, err := json.Marshal(m)
+        if err != nil {
+            fmt.Printf("Failed to marshal to json")
+        }
+        fmt.Fprintf(w, "%s", pingResponse)
     } else {
-        pings := m[id]
-        pingResponse, err := json.Marshal(pings)
-    	if err != nil {
-	    fmt.Printf("Failed to marshal to json")
+ 	// filter on the specified slice
+        m[id] = m[id].Pings(from)
+        pingResponse, err := json.Marshal(m[id])
+        if err != nil {
+            fmt.Printf("Failed to marshal to json")
         }
         fmt.Fprintf(w, "%s", pingResponse)
     }

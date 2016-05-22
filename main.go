@@ -21,7 +21,7 @@ func main() {
 
     // routes
     router.HandleFunc("/{deviceId}/{epochTime}", StorePing).Methods(Post)
-    router.HandleFunc("/{deviceId}/{date}", RetrievePing).Methods(Get)    
+    router.HandleFunc("/{deviceId}/{from}", RetrievePing).Methods(Get)    
 
     router.HandleFunc("/{deviceId}/{from}/{to}", RetrievePingTo).Methods(Get)    
     router.HandleFunc("/devices", RetrieveDevices).Methods(Get)

@@ -18,7 +18,7 @@ func GetBytes(key interface{}) ([]byte, error) {
     return buf.Bytes(), nil
 }
 
-func FromBytes(data []byte, obj interface{}) (error) {
+func FromBytes(data []byte, obj interface{}) error {
     b := bytes.NewBuffer(data)
     dec := gob.NewDecoder(b)
     err := dec.Decode(obj)
@@ -28,7 +28,7 @@ func FromBytes(data []byte, obj interface{}) (error) {
     return nil
 }
 
-func GetPingMap() (map[string]int64arr, error){
+func GetPingMap() (map[string]int64arr, error) {
     m := make(map[string]int64arr)
     if PingMapCreated() {
         b, _ := ioutil.ReadFile(DataFile)
