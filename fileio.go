@@ -28,13 +28,15 @@ func FromBytes(data []byte, obj interface{}) (error) {
     return nil
 }
 
-func GetPingMap() (map[string][]uint32, error){
-    b, _ := ioutil.ReadFile(DataFile)
-    m := make(map[string][]uint32)
-    err := FromBytes(b, &m)
-    if err != nil {
-        fmt.Printf("Failed to get from bytes.")
-  	return nil, err
+func GetPingMap() (map[string]int64arr, error){
+    m := make(map[string]int64arr)
+    if PingMapCreated() {
+        b, _ := ioutil.ReadFile(DataFile)
+        err := FromBytes(b, &m)
+        if err != nil {
+            fmt.Printf("Failed to get from bytes.")
+  	    return nil, err
+        }
     }
     return m, nil
 }
