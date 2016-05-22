@@ -27,19 +27,38 @@ func (a int64arr) Pings(from string) int64arr {
  	fmt.Printf("Could not parse ISO date.")
         panic(err)
     }
-    t := fromDate.Unix()
-    for i := 0; i < a.Len(); i++ {
-	if a[i] >= t {
-            fmt.Printf("\na[i] is greater than t %v", i)
-	    fmt.Printf("\na was %v", a)
-	    a = a[i:]
-	    fmt.Printf("\na is now %v", a)
-	    break
-   	}
+    i := getLowerBound(a, fromDate)
+    j := getUpperBound(a, fromDate)
+    if i == -1 {
+  	a = nil
+    } else {
+        fmt.Printf("\na was %v", a)
+        a = a[i:j]
+        fmt.Printf("\na is now %v", a)
     }
     return a
 }
 
+func getLowerBound(a int64arr, from time.Time) int {
+    unixtime := from.Unix()
+    for i := 0; i < a.Len(); i++ {
+	if a[i] >= unixtime {
+	    return i
+   	}
+    }   
+    return -1 
+}
+
+func getUpperBound(a int64arr, from time.Time) int {
+    from = from.AddDate(0, 0, 1)
+    unixtime := from.Unix()
+    for i := 0; i < a.Len(); i++ {
+	if a[i] > unixtime {
+	    return i
+ 	} 
+    }
+    return a.Len()
+}
 func (a int64arr) PingsTo(from, to string) int64arr {
     return a
 }
