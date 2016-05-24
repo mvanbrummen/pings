@@ -59,8 +59,12 @@ func RetrievePing(w http.ResponseWriter, r *http.Request) {
 
     if id == AllDevices {
 	// filter on every slice
-   	for _, i := range m {
- 	    i = i.Pings(from)
+        devices, err := GetPingMapKeys()
+        if err != nil {
+	    fmt.Printf("Failed to get ping map keys.")
+        }
+   	for _, k := range devices {
+ 	    m[k] = m[k].Pings(from)
   	}	
         pingResponse, err := json.Marshal(m)
         if err != nil {
