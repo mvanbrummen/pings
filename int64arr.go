@@ -30,7 +30,7 @@ func (a int64arr) Pings(from string) int64arr {
     i := getLowerBound(a, fromDate)
     j := getUpperBound(a, fromDate)
     if i == -1 {
-  	a = nil
+  	a = make(int64arr, 0)
     } else {
         fmt.Printf("\na was %v", a)
         a = a[i:j]
