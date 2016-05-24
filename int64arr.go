@@ -32,9 +32,7 @@ func (a int64arr) Pings(from string) int64arr {
     if i == -1 {
   	a = make(int64arr, 0)
     } else {
-        fmt.Printf("\na was %v", a)
         a = a[i:j]
-        fmt.Printf("\na is now %v", a)
     }
     return a
 }
