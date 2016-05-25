@@ -48,7 +48,7 @@ func getLowerBound(a int64arr, from time.Time) int {
 }
 
 func getUpperBound(a int64arr, from time.Time) int {
-    from = from.AddDate(0, 0, 1)
+    from = from.AddDate(0, 0, 1).Add(-1 * time.Second)
     unixtime := from.Unix()
     for i := 0; i < a.Len(); i++ {
 	if a[i] > unixtime {
