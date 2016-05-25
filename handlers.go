@@ -8,7 +8,6 @@ import (
     "strconv"
     "os"
     "sort"
-    "regexp"
 
     "github.com/gorilla/mux"
 )
@@ -16,24 +15,14 @@ import (
 const (
     DataFile string = "ping.data"
     AllDevices string = "all"
-    fmtISO = "^\\d{4}-\\d{2}-\\d{2}$"
-    fmtUnix = "^[0-9]\\d*$"
 )
-
-func isDateFormat(format, date string) bool {
-    b, err := regexp.MatchString(format, date)
-    if err != nil {
-        return false
-    }
-    return b
-}
 
 func StorePing(w http.ResponseWriter, r *http.Request) {
     // get path params
     vars := mux.Vars(r)
     id := vars["deviceId"]
     time := vars["epochTime"]
-    if isDateFormat(fmtUnix, time) {
+    if IsDateFormat(FmtUnix, time) {
         t, _ := strconv.ParseInt(time, 0, 64)
 
         // get data from file otherwise instantiate
@@ -66,7 +55,7 @@ func RetrievePing(w http.ResponseWriter, r *http.Request) {
     vars := mux.Vars(r)
     id := vars["deviceId"]
     from := vars["from"]
-    if isDateFormat(fmtISO, from) {
+    if IsDateFormat(FmtISO, from) {
         m, err := GetPingMap()
         if err != nil {
 	    fmt.Printf("Could not get ping map")
@@ -101,14 +90,39 @@ func RetrievePing(w http.ResponseWriter, r *http.Request) {
 }
 
 func RetrievePingTo(w http.ResponseWriter, r *http.Request) {
-    fmt.Fprintf(w, r.URL.Path)
+    // get path params
     vars := mux.Vars(r)
     id := vars["deviceId"]
-    fmt.Fprintf(w, "\ndeviceId: %v", id)
     from := vars["from"]
-    fmt.Fprintf(w, "\nfrom: %v", from)
     to := vars["to"]
-    fmt.Fprintf(w, "\nto: %v", to)
+
+    m, err := GetPingMap()
+    if err != nil { 
+        fmt.Printf("Could not get ping map")
+    }
+    if id == AllDevices {
+        // filter on every slice
+        devices, err := GetPingMapKeys()
+        if err != nil {
+	    fmt.Printf("Failed to get ping map keys.")
+        }
+   	for _, k := range devices {
+ 	    m[k] = m[k].PingsTo(from, to)
+  	}	
+        pingResponse, err := json.Marshal(m)
+        if err != nil {
+            fmt.Printf("Failed to marshal to json")
+        }
+        fmt.Fprintf(w, "%s", pingResponse)
+    } else {
+ 	// filter on the specified slice
+	m[id] = m[id].PingsTo(from, to)
+        pingResponse, err := json.Marshal(m[id])
+   	if err != nil {
+	    fmt.Printf("Failed to marshal to json\n")
+  	}
+	fmt.Fprintf(w, "%s", pingResponse)
+    }
 }
 
 func RetrieveDevices(w http.ResponseWriter, r *http.Request) {
