@@ -8,10 +8,10 @@ import (
 	"os"
 )
 
-func GetBytes(key interface{}) ([]byte, error) {
+func GetBytes(obj interface{}) ([]byte, error) {
 	var buf bytes.Buffer
 	enc := gob.NewEncoder(&buf)
-	err := enc.Encode(key)
+	err := enc.Encode(obj)
 	if err != nil {
 		return nil, err
 	}
