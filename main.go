@@ -15,9 +15,6 @@ const (
 func main() {
     // initialise router
     router := mux.NewRouter().StrictSlash(true)
-   
-    // serve up static html
-    router.Handle("/", http.FileServer(http.Dir("./static")))
 
     // routes
     router.HandleFunc("/{deviceId}/{epochTime}", StorePing).Methods(Post)

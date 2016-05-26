@@ -2,6 +2,7 @@ package main
 
 import (
     "fmt"
+    "log"
     "net/http"
     "io/ioutil"
     "encoding/json"
@@ -43,10 +44,11 @@ func StorePing(w http.ResponseWriter, r *http.Request) {
         b, _ := GetBytes(m)
         err := ioutil.WriteFile(DataFile, b, 0600)  
         if err != nil {
-            fmt.Printf("Failed to write data.")
+            log.Print("Failed to write data.")
+	    http.Error(w, "Internal server error.", http.StatusInternalServerError)
         }
     } else {
-	fmt.Printf("Epoch time was not a unix timestamp.\n")
+ 	http.Error(w, "Epoch time was not a unix timestamp", http.StatusBadRequest)
     }
 }
 
@@ -58,21 +60,24 @@ func RetrievePing(w http.ResponseWriter, r *http.Request) {
     if IsDateFormat(FmtISO, from) {
         m, err := GetPingMap()
         if err != nil {
-	    fmt.Printf("Could not get ping map")
+	    log.Print("Could not get ping map.")
+	    http.Error(w, "Internal server error.", http.StatusInternalServerError)
         }
 
         if id == AllDevices {
 	    // filter on every slice
             devices, err := GetPingMapKeys()
             if err != nil {
-	        fmt.Printf("Failed to get ping map keys.")
+	        log.Print("Failed to get ping map keys.")
+	        http.Error(w, "Internal server error.", http.StatusInternalServerError)
             }
    	    for _, k := range devices {
  	        m[k] = m[k].Pings(from)
   	    }	
             pingResponse, err := json.Marshal(m)
             if err != nil {
-                fmt.Printf("Failed to marshal to json")
+                log.Print("Failed to marshal to json.")
+	        http.Error(w, "Internal server error.", http.StatusInternalServerError)
             }
             fmt.Fprintf(w, "%s", pingResponse)
         } else {
@@ -80,12 +85,13 @@ func RetrievePing(w http.ResponseWriter, r *http.Request) {
             m[id] = m[id].Pings(from)
             pingResponse, err := json.Marshal(m[id])
             if err != nil {
-                fmt.Printf("Failed to marshal to json")
+                log.Print("Failed to marshal to json.")
+	        http.Error(w, "Internal server error.", http.StatusInternalServerError)
             }
             fmt.Fprintf(w, "%s", pingResponse)
         } 
     } else {
-	fmt.Printf("From was not an ISO date\n")
+	http.Error(w, "From was not an ISO date.", http.StatusBadRequest)
     }
 }
 
@@ -98,20 +104,23 @@ func RetrievePingTo(w http.ResponseWriter, r *http.Request) {
 
     m, err := GetPingMap()
     if err != nil { 
-        fmt.Printf("Could not get ping map")
+        log.Print("Could not get ping map.")
+	http.Error(w, "Internal server error.", http.StatusInternalServerError)
     }
     if id == AllDevices {
         // filter on every slice
         devices, err := GetPingMapKeys()
         if err != nil {
-	    fmt.Printf("Failed to get ping map keys.")
+	    log.Print("Failed to get ping map keys.")
+	    http.Error(w, "Internal server error.", http.StatusInternalServerError)
         }
    	for _, k := range devices {
  	    m[k] = m[k].PingsTo(from, to)
   	}	
         pingResponse, err := json.Marshal(m)
         if err != nil {
-            fmt.Printf("Failed to marshal to json")
+            log.Print("Failed to marshal to json.")
+	    http.Error(w, "Internal server error.", http.StatusInternalServerError)
         }
         fmt.Fprintf(w, "%s", pingResponse)
     } else {
@@ -119,7 +128,8 @@ func RetrievePingTo(w http.ResponseWriter, r *http.Request) {
 	m[id] = m[id].PingsTo(from, to)
         pingResponse, err := json.Marshal(m[id])
    	if err != nil {
-	    fmt.Printf("Failed to marshal to json\n")
+	    log.Print("Failed to marshal to json.")
+	    http.Error(w, "Internal server error.", http.StatusInternalServerError)
   	}
 	fmt.Fprintf(w, "%s", pingResponse)
     }
@@ -128,9 +138,14 @@ func RetrievePingTo(w http.ResponseWriter, r *http.Request) {
 func RetrieveDevices(w http.ResponseWriter, r *http.Request) {
     devices, err := GetPingMapKeys()
     if err != nil {
-	fmt.Printf("Failed to get ping map keys.")
+	log.Print("Failed to get ping map keys.")
+	http.Error(w, "Internal server error.", http.StatusInternalServerError)
     }
-    devicesResponse, _ := json.Marshal(devices)
+    devicesResponse, err := json.Marshal(devices)
+    if err != nil {
+        log.Print("Failed to marshal to json.")
+	http.Error(w, "Internal server error.", http.StatusInternalServerError)
+    }
     fmt.Fprintf(w, "%s", devicesResponse) 
 }
 
@@ -138,7 +153,8 @@ func DeleteAllPings(w http.ResponseWriter, r *http.Request) {
     if PingMapCreated() {
         err := os.Remove(DataFile)     
         if err != nil {
- 	    fmt.Printf("Failed to delete ping data file.")
+ 	    log.Print("Failed to delete ping data file.")
+	    http.Error(w, "Internal server error.", http.StatusInternalServerError)
         }   
     }
 }
