@@ -1,6 +1,6 @@
 stages:
-  - build
   - test
+  - build
 
 before_script:
     - export CURRENT_BUILD_PATH=$(pwd)
@@ -21,14 +21,15 @@ before_script:
     - go env
     - which go
 
-build-my-project:
-  stage: build
-  script:
-    - cd $CURRENT_BUILD_PATH
-    - go build
-
 test-my-project:
   stage: test
   script:
     - cd $CURRENT_BUILD_PATH
     - go test
+
+build-my-project:
+  stage: build
+  script:
+    - cd $CURRENT_BUILD_PATH
+    - go get
+    - go build
