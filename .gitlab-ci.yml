@@ -21,17 +21,19 @@ before_script:
     - echo $PATH
     - go env
     - which go
+    - mv $CURRENT_BUILD_PATH $GOPATH/src/gitlab.com/mvanbrummen
+    - export BUILD_PATH=$GOPATH/src/gitlab.com/mvanbrummen/pings
 
 test-my-project:
   stage: test
   script:
-    - cd $CURRENT_BUILD_PATH
+    - cd BUILD_PATH
     - go get
     - go test
 
 build-my-project:
   stage: build
   script:
-    - cd $CURRENT_BUILD_PATH
+    - cd BUILD_PATH
     - go get
     - go build
