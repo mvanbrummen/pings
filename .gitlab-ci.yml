@@ -8,7 +8,7 @@ before_script:
     - rm -rf $HOME/golang
     - rm -rf $HOME/gopath
     - mkdir -p $HOME/golang # for GOROOT (contains the Go binary & core packages)
-    - mkdir -p $HOME/gopath # for GOPATH (contains code and external packages)
+    - mkdir -p $HOME/gopath/src $HOME/gopath/bin $HOME/gopath/pkg
     - curl http://storage.googleapis.com/golang/go1.5.2.linux-amd64.tar.gz 2>/dev/null > go1.5.2.linux-amd64.tar.gz
     - tar -C $HOME/golang -xzf go1.5.2.linux-amd64.tar.gz
     - export GOROOT=$HOME/golang/go
