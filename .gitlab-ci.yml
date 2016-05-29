@@ -1,5 +1,3 @@
-image: ruby:2.1
-
 stages:
   - test
   - build
@@ -32,8 +30,6 @@ test-my-project:
     - cd $BUILD_PATH
     - go get
     - go test
-    - go run date.go file_io.go handlers.go int64arr.go main.go
-    - ruby pings.rb
 
 build-my-project:
   stage: build
