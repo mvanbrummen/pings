@@ -1,3 +1,5 @@
+image: ruby:2.1
+
 stages:
   - test
   - build
@@ -30,6 +32,7 @@ test-my-project:
     - cd $BUILD_PATH
     - go get
     - go test
+    - ruby pings.rb
 
 build-my-project:
   stage: build
