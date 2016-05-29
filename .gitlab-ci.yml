@@ -21,7 +21,7 @@ before_script:
     - echo $PATH
     - go env
     - which go
-    - mv $CURRENT_BUILD_PATH $GOPATH/src/gitlab.com/mvanbrummen
+    - mv /builds/mvanbrummen/pings $GOPATH/src/gitlab.com/mvanbrummen/pings
     - export BUILD_PATH=$GOPATH/src/gitlab.com/mvanbrummen/pings
 
 test-my-project:
