@@ -1,11 +1,11 @@
 stages:
-  - setup
+  - install-environment
   - test
   - build
 
 install-go:
-  - stage: setup
-  - script:
+  stage: install-environment
+  script:
     - export CURRENT_BUILD_PATH=$(pwd)
     - echo $CURRENT_BUILD_PATH
     - echo $PATH
