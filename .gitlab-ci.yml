@@ -30,6 +30,8 @@ install-go:
 test-my-project:
   stage: test
   script:
+    - echo test
+    - echo $BUILD_PATH
     - cd $BUILD_PATH
     - go get
     - go test
