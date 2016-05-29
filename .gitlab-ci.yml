@@ -24,7 +24,7 @@ install-go:
     - echo $PATH
     - go env
     - which go
-    - mv -v /builds/mvanbrummen/pings $GOPATH/src/gitlab.com/mvanbrummen
+    - cp -R /builds/mvanbrummen/pings $GOPATH/src/gitlab.com/mvanbrummen
     - export BUILD_PATH=$GOPATH/src/gitlab.com/mvanbrummen/pings
 
 test-my-project:
